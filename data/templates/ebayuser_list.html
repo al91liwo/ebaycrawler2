@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+</style>
+        <!-- jQuery -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <!-- Popper.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+
+        <!-- Bootstrap -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+        <!-- Material Design for Bootstrap -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.16/js/mdb.min.js"></script>
+
+<script>
+
+            $(document).ready(function() {
+                $('.table-update').on('click', function () {
+                    const rows = $(this).parents('tr');
+                    var children = rows.children();
+                    var data = {};
+                    for (var index = 0; index < children.length; ++index) {
+                        data[children[index].id] = children[index].innerText;
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'update_user' %}",
+                        data: data,
+                        success: function (data) {
+                        }
+                    });
+                    rows.detach();
+                });
+            });
+
+        </script>
+
+
+
+        <div class="card">
+          <h3 class="card-header text-center font-weight-bold text-uppercase py-4">Ebay users</h3>
+          <div class="card-body">
+            <div id="table" class="table-editable">
+              <span class="table-add float-right mb-3 mr-2"><a href="#!" class="text-success"><i
+                    class="fas fa-plus fa-2x" aria-hidden="true"></i></a></span>
+              <table class="table table-bordered table-responsive-md table-striped text-center">
+                <thead>
+                  <tr>
+                      <th class="text-center">email</th>
+                      <th class="text-center">company name</th>
+                    <th class="text-center">first name</th>
+                    <th class="text-center">last name</th>
+                    <th class="text-center">street</th>
+                    <th class="text-center">zip code</th>
+                    <th class="text-center">city</th>
+                      <th class="text-center"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for obj in object_list %}
+                  <tr>
+                      <td class="pt-3-half" id="email">
+                          {% if obj.link %}
+                          <a href="{{ obj.link}}" target="_blank" style="color:blue;">{{ obj.email }}</a>
+                          {% else %}
+                          {{ obj.email }}
+                          {% endif %}
+                      </td>
+                      <td class="pt-3-half" id="company_name" contenteditable="true">{{ obj.company_name }}</td>
+                    <td class="pt-3-half" id="first_name" contenteditable="true">{{ obj.first_name }}</td>
+                    <td class="pt-3-half" id="last_name" contenteditable="true">{{ obj.last_name }}</td>
+                    <td class="pt-3-half" id="street" contenteditable="true">{{ obj.street }}</td>
+                    <td class="pt-3-half" id="plz" contenteditable="true">{{ obj.plz }}</td>
+                    <td class="pt-3-half" id="city" contenteditable="true">{{ obj.city }}</td>
+                    <td>
+                        <span class="table-update"><button type="submit"
+                        class="btn btn-success btn-rounded btn-sm my-0">Update</button></span>
+
+                    <form action="{% url 'delete_user' pk=obj.pk %}" method="POST" style="display:inline-block">
+                        {% csrf_token %}
+                        <span class="table-remove"><button type="submit"
+                        class="btn btn-danger btn-rounded btn-sm my-0">Remove</button></span>
+                   </form>
+                    </td>
+                      <td>
+                          <div>
+                          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample{{ obj.pk }}" aria-expanded="false" aria-controls="collapseExample">
+                                 <img src="https://cdn.onlinewebfonts.com/svg/img_585.png" width="15" height="15">
+                              </button>
+                          <div class="collapse" id="collapseExample{{ obj.pk }}">
+                              <div class="card card-body">
+                                {{ obj.description | safe }}
+                              </div>
+                            </div>
+                              </div>
+                      </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+
+
+        {% if is_paginated %}
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

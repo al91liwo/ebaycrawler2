@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+
+            {% for email in emails %}
+                <form action="{% url 'add_email_template'  pk=email.pk %}" name="{{ email.pk }}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <textarea class="form-control" name="subject" id="subject"  rows="3">{{ email.subject }}</textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="text">Text</label>
+                    <textarea class="form-control" name="text" id="text" rows="3">{{ email.text }}</textarea>
+                  </div>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </form>
+        <hr/>
+     {% endfor %}
+
+                    <form action="{% url 'add_new_email_template' %}" name="add_new_email" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                    <button type="submit" class="btn btn-success">+</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-6">
+                    {% for attach in attachs %}
+                    <h1>{{ attach.1 }}</h1>
+
+                        <img src="{% url 'download' attach.0 %}" alt="{{ attach.1 }}" height="400">
+                    <hr/>
+                    {% endfor %}
+
+                    <form enctype="multipart/form-data" method="post" action="{% url 'add_pdf_template'%}" name="add_pdf">
+                    {% csrf_token %}
+                      <div class="form-group">
+                    <label for="add_pdf">Upload pdf template</label>
+                    <input type="file" class="form-control-file" id="add_pdf" name="add_pdf">
+                  </div>
+                        <button type="submit" class="btn btn-success">Upload</button>
+                    </form>
+
+
+                    </div>
+                </div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+{% endblock %}

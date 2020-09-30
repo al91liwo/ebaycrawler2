@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if user.link %}
+      <a href="{{ user.link}}" target="_blank" style="color:blue;">{{ user.email }}</a>
+  {% else %}
+      {{ user.email }}
+{% endif %}
+
+{% endblock %}}

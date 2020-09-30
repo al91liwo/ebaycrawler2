@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block content %}
+<script type="text/javascript">
+$( document ).ready(function()
+{
+   $("img").imgCheckbox(
+       {"radio": true}
+   );
+});
+</script>
+<script>
+     $(document).ready(function() {
+         $('.send').on('click', function () {
+             var email = $('option:selected')[0].value
+             var attach = $('.imgChked img')[0].id
+             var users = $.map($('.items'), function (n) {
+                 return n.id;
+             });
+
+             var url = "{% url 'sending' %}";
+             $.ajax({
+                 url: url,
+                 type: 'POST',
+                 contentType: 'application/json; charset=utf-8',
+                 data: JSON.stringify({
+                     'email': email,
+                     'attachments': attach,
+                     'users': users,
+                 }),
+                 success: function (data) {
+                     if (data.status == 0) {
+                         alert(data.txt);
+                     }
+                     if (data.status == 1) {
+                         window.location.reload();
+                     }
+                 }
+             });
+             return false;
+         });
+     });
+</script>
+
+
+<script>
+$(function() {
+        $('#email_select').change(function(){
+            $('.emails').hide();
+            $('#' + $(this).val()).show();
+        });
+    });
+</script>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Select a email template</h1>
+
+                    <select id="email_select" class="browser-default custom-select">
+                      <option selected>Open this select menu</option>
+                     {% for email in emails %}
+                        <option value="{{ email.pk }}" >{{ email.subject }}</option>
+
+                    {% endfor %}
+                    </select>
+
+
+                    {% for email in emails %}
+                    <h3>
+                    <div id="{{ email.pk }}" class="emails" style="display:none">{{ email.text }}</div>
+                        </h3>
+                    {% endfor %}
+                    <hr/>
+                    <p>Select a attachment template</p>
+                    <section class="wrapper special" option="">
+                    <p>
+                     {% for attach in attachs %}
+
+                    <img src="{% url 'download' attach.0 %}" width="200" id="{{ attach.2 }}"class="img-fluid" alt="">
+                    <span class="spacer"></span>
+                    {% endfor %}
+                    </p>
+
+
+                </section>
+
+
+            </div>
+                </div>
+		</div>
+	</div>
+</div>
+
+
+<div class="card">
+      <h3 class="card-header text-center font-weight-bold text-uppercase py-4">Ebay users</h3>
+      <div class="card-body">
+        <div id="table" class="table-editable">
+          <span class="table-add float-right mb-3 mr-2"><a href="#!" class="text-success"><i
+                class="fas fa-plus fa-2x" aria-hidden="true"></i></a></span>
+          <table class="table table-bordered table-responsive-md table-striped text-center">
+            <thead>
+              <tr>
+                  <th class="text-center">email</th>
+                <th class="text-center">first name</th>
+                <th class="text-center">last name</th>
+                <th class="text-center">street</th>
+                <th class="text-center">zip code</th>
+                <th class="text-center">city</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for obj in object_list %}
+              <tr>
+                  <td class="pt-3-half" id="email">{{ obj.email }}</td>
+                <td class="pt-3-half" id="first_name" contenteditable="false">{{ obj.first_name }}</td>
+                <td class="pt-3-half" id="last_name" contenteditable="false">{{ obj.last_name }}</td>
+                <td class="pt-3-half" id="street" contenteditable="false">{{ obj.street }}</td>
+                <td class="pt-3-half" id="plz" contenteditable="false">{{ obj.plz }}</td>
+                <td class="pt-3-half" id="city" contenteditable="false">{{ obj.city }}</td>
+                  <div style="display:none;" class="items" id="{{ obj.pk }}"></div>
+                <td>
+                <form action="{% url 'delete_user' pk=obj.pk %}" method="POST">
+                    {% csrf_token %}
+                    <span class="table-remove"><button type="submit"
+                    class="btn btn-danger btn-rounded btn-sm my-0">Remove</button></span>
+               </form>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+    </div>
+</div>
+<div class="col-md-12">
+<span class="send"><button type="submit" class="btn btn-success btn-rounded btn-sm my-0">Send</button></span>
+
+</div>
+
+{% endblock %}

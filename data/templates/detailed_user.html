@@ -1,0 +1,59 @@
+{% if user %}
+<div>
+<span class="border border-success">
+	<div class="row">
+
+		<div class="col-md-4">
+			<h3>
+				{% if user.link %}
+					  <a href="{{ user.link}}" target="_blank" style="color:blue;">{{ user.email }}</a>
+				  {% else %}
+					  {{ user.email }}
+				{% endif %}
+
+			</h3>
+			<dl>
+				<dt>
+					Company name
+				</dt>
+				<dd>
+					{{ user.company_name }}
+				</dd>
+				<dt>
+					First name
+				</dt>
+				<dd>
+                    {{ user.first_name }}
+				</dd>
+				<dt>
+					Last name
+				</dt>
+				<dd>
+					{{ user.last_name }}
+				</dd>
+				<dd>
+					{{ user. }}
+				</dd>
+				<dt>
+					Address
+				</dt>
+				<dd>
+					{{ user.plz }}, {{ user.city }} <br>
+                    {{user.street}}
+				</dd>
+			</dl>
+		</div>
+		<div class="col-md-4">
+				<h4>
+					Ebay description
+                </h4>
+					<p class="card-text">
+						{{ user.description | safe }}
+					</p>
+
+		</div>
+
+	</div>
+    </span>
+</div>
+{% endif %}
